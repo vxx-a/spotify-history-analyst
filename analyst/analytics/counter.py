@@ -35,6 +35,10 @@ class Counter:
         songs.sort(key=lambda s: s.count, reverse=True)
         return songs
     
+    def playtime_sort(songs: list[SongCount]) -> list[SongCount]:
+        songs.sort(key=lambda s: sum([m.played_ms for m in s.song.meta]), reverse=True)
+        return songs   
+
     def count_print(songs: list[SongCount]):
         for song in songs:
             song.print()

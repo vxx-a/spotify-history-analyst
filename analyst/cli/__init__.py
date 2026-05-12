@@ -4,9 +4,23 @@ import parser
 import inquirer
 
 questions_main = [
-    inquirer.Text('history_path', message='Directory with history data', default='history'),
-    inquirer.List('analysis_type', message='What would you want to analyze?', choices=['Match song name / artist / album']),
-    inquirer.Confirm('exit', message='Would you like to exit?', default=True),
+    inquirer.Text(
+        'history_path', 
+        message='Directory with history data', 
+        default='history'
+    ),
+    inquirer.List(
+        'analysis_type', 
+        message='What would you want to analyze?', 
+        choices=[
+            ('Match song name / artist / album', 'match')
+        ]
+    ),
+    inquirer.Confirm(
+        'exit', 
+        message='Would you like to exit?', 
+        default=True
+    ),
 ]
 
 def run():
@@ -23,7 +37,7 @@ def run():
 
         analysis_type = answers['analysis_type']
 
-        if analysis_type == 'Match song name / artist / album':
+        if analysis_type == 'match':
             match_songs(songs)
 
         answers = inquirer.prompt([questions_main[2]])
@@ -33,8 +47,20 @@ def run():
     
 
 questions_match = [
-    inquirer.Text('query', message='Enter song name, artist or album'),
-    inquirer.Confirm('sort_by_count', message='Do you want to sort songs by listening count?', default=True),
+    inquirer.Text(
+        'query', 
+        message='Enter song name, artist or album'
+    ),
+    inquirer.List(
+        'sorting', 
+        message='Do you want to sort matched songs?',
+        choices=[
+            ('By playtime', 'playtime'),
+            ('By listens', 'listens'),
+            ('No', None)
+        ],
+        default=2
+    ),
 ]
 
 def match_songs(songs: list[Song]):
@@ -44,8 +70,10 @@ def match_songs(songs: list[Song]):
 
     matched = counter.match(answers['query'])
 
-    if answers['sort_by_count']:
+    if answers['sorting'] == 'listens':
         matched = analytics.Counter.count_sort(matched)
+    elif answers['sorting'] == 'playtime':
+        matched = analytics.Counter.playtime_sort(matched)
 
     matched = matched[:50]
 
