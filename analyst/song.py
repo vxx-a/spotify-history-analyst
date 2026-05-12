@@ -28,6 +28,12 @@ class Song:
         track_uri = d['spotify_track_uri']
         meta = cls.MetaInfo(d['ms_played'], d['ts'])
 
+        if artist == None or \
+            album == None or \
+            name == None or \
+            track_uri == None:
+            raise Exception('Failed to get song info from dict')
+
         return cls(artist, name, album, track_uri, meta)
 
     @property
